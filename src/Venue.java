@@ -17,6 +17,9 @@ public class Venue {
     public double getPayoutAmount(){
         return this.payoutAmount;
     }
+    public String getVenueName(){
+        return name;
+    }
 
     @Override
     public String toString(){

@@ -38,13 +38,27 @@ public class Band {
     }
     boolean isActive(){
         if (fans == 0){
-            return false;
             bandHasBrokenUp();
+            return false;
         }
+        return true;
     }
     void addXP(int amount){
         xP += amount;
         levelUp();
+    }
+    void earnMoney(double amount){
+        money += amount;
+    }
+    boolean spendMoney(double amount){
+        if (money >= amount){
+            money -= amount;
+            System.out.println("Transaction successful!");
+            return true;
+        } else {
+            System.out.println("Not enough money... womp womp");
+            return false;
+        }
     }
 
     public void addSongToRepertoire(Song song){
@@ -110,6 +124,19 @@ public class Band {
             default -> { return null; }
         }
     }
+    public int getFans(){
+        return fans;
+    }
+    public int getFameLevel(){
+        return fameLevel;
+    }
+    public int getXP(){
+        return xP;
+    }
+    public double getMoney(){
+        return money;
+    }
+
     public void printBandRepertoire(){
         System.out.println(bandName + " repertoire: ");
         repertoire.printAllSongs();
@@ -137,6 +164,9 @@ public class Band {
     public String toString(){
         return "=== " + bandName.toUpperCase() + getBandGenre() + " ===\nFame Level: " + fameLevel + " | Fans: " + fans + "/" + maxFans + " | Money: $" + money;
     }
+
+    //actions
+
 
 
 
