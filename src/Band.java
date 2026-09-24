@@ -14,7 +14,7 @@ public class Band {
     //Konstruktør (opretter band med repetoire)
     Band(String bandName, char genre){
         this.bandName = bandName;
-        this.fans = 500;
+        this.fans = 1000;
         this.maxFans = 5000;
         this.fameLevel = 1;
         this.xP = 10;
@@ -28,12 +28,16 @@ public class Band {
 
     public void gainFans(int amount){
         fans += amount;
+        if (fans > maxFans){
+            fans = maxFans;
+        }
     }
     public void loseFans(int amount){
         fans -= amount;
         if (fans < 0){
             fans = 0;
         }
+        isLoosingRelevance();
         isActive();
     }
     boolean isActive(){
@@ -67,7 +71,7 @@ public class Band {
     public void removeSongFromRepertoire(String title){
         Song song = repertoire.getSongByName(title);
         if (song != null){
-            song = null;
+            repertoire.removeSong(song);
             System.out.println("Song: " + title + " has been removed from repertoire.");
         } else {
             System.out.println("Song does not exist.");
@@ -78,7 +82,7 @@ public class Band {
     void levelUp(){
         if (xP >= (2000*fameLevel)){
             System.out.println("LEVEL UP!");
-            maxFans += 2500 * fameLevel;
+            maxFans += maxFans * fameLevel;
             fameLevel++;
             xP = 0;
             System.out.println(getStatusTitle());
@@ -112,9 +116,6 @@ public class Band {
     public double getFanPercentage(){
         return ((double) fans / maxFans) * 100;
     }
-    public String getBandName(){
-        return bandName;
-    }
     public String getBandGenre(){
         switch (genre){
             case 'R' -> { return "(Rock)"; }
@@ -127,31 +128,23 @@ public class Band {
     public int getFans(){
         return fans;
     }
-    public int getFameLevel(){
-        return fameLevel;
-    }
-    public int getXP(){
-        return xP;
-    }
-    public double getMoney(){
-        return money;
-    }
 
     public int getAttendance(Venue venue){
         int capacity = venue.getVenueCapacity();
         int attendance;
-        int attendancePicker = (int) (Math.random() * 3);
+        int attendancePicker = (int) (Math.random() * 4);
         switch (attendancePicker){
             case 1 -> attendance = capacity/100 * 90;
             case 2 -> attendance = capacity/100 * 75;
-            case 3 -> attendance = capacity/100 * 40;
+            case 3 -> attendance = capacity/100 * 55;
+            case 4 -> attendance = capacity/100 * 40;
             default -> attendance = capacity/100 * 25;
         }
         return attendance;
     }
 
     public void printBandRepertoire(){
-        System.out.println(bandName + " repertoire: ");
+        System.out.println("\"" + bandName + "\" repertoire: ");
         repertoire.printAllSongs();
         System.out.println(" ");
     }
@@ -164,7 +157,7 @@ public class Band {
         boolean loosingRelevance;
         double fanPercentage = getFanPercentage();
         if (fanPercentage < 25.0 && fans != 0){
-            System.out.println("WARNING: Losing relevance! Consider a comeback strategy.");
+            System.out.println("\n//WARNING: Losing relevance! Consider a comeback strategy!//\n");
             loosingRelevance = true;
         } else {
             loosingRelevance = false;
@@ -175,42 +168,69 @@ public class Band {
     //toString
     @Override
     public String toString(){
-        return "=== " + bandName.toUpperCase() + getBandGenre() + " ===\nFame Level: " + fameLevel + " | Fans: " + fans + "/" + maxFans + " | Money: $" + money;
+        return "\n=== " + bandName.toUpperCase() + " " + getBandGenre() + " ===\nFame " + getStatusTitle() + " | Fans: " + fans + "/" + maxFans + " | Money: $" + money + "\n";
     }
 
     //actions
 
-    public void playGig(Venue venue, Band band) {
-        System.out.println(band.getBandName() + " plays at " + venue.getVenueName());
+    public void playGig(Venue venue) {
+        System.out.println("\n"+bandName + " plays at " + venue);
         int attendancePercent = getAttendance(venue) / (venue.getVenueCapacity() / 100);
-        System.out.println("Playing at " + venue);
         if (attendancePercent >= 80 && attendancePercent <= 100) {
             System.out.println("Great turnout!\nAttendance: " + attendancePercent);
-            System.out.println("Fans: " + band.getFans() + " -> " + (band.getFans() + 200 * band.getFameLevel()));
-            System.out.println("XP: " + band.getXP() + " -> " + (band.getXP() + 100 * band.getFameLevel()));
-            band.gainFans(200 * band.getFameLevel());
-            band.addXP(100 * band.getFameLevel());
+            System.out.println("Fans: " + fans + " -> " + (fans + (venue.getVenueCapacity()/100*40)));
+            System.out.println("XP: " + xP + " -> " + (xP + 100 * fameLevel));
+            gainFans(venue.getVenueCapacity()/100*40);
+            addXP(100 * fameLevel);
         } else if (attendancePercent < 80 && attendancePercent >= 60) {
+            System.out.println("Successful gig.\nAttendance: " + attendancePercent);
+            System.out.println("Fans: " + fans + " -> " + (fans + (venue.getVenueCapacity()/100*25)));
+            System.out.println("XP: " + xP + " -> " + (xP + 75 * fameLevel));
+            gainFans(venue.getVenueCapacity()/100*25);
+            addXP(75 * fameLevel);
+        } else if (attendancePercent < 60 && attendancePercent >= 45) {
             System.out.println("Could have been better.\nAttendance: " + attendancePercent);
-            System.out.println("Fans: " + band.getFans() + " -> " + (band.getFans() + 100 * band.getFameLevel()));
-            System.out.println("XP: " + band.getXP() + " -> " + (band.getXP() + 75 * band.getFameLevel()));
-            band.gainFans(100 * band.getFameLevel());
-            band.addXP(75 * band.getFameLevel());
-        } else if (attendancePercent < 60 && attendancePercent >= 0) {
-            System.out.println("Well... try again.\nAttendance: " + attendancePercent);
-            System.out.println("Fans: " + band.getFans() + " -> " + (band.getFans() + 50 * band.getFameLevel()));
-            System.out.println("XP: " + band.getXP() + " -> " + (band.getXP() + 25 * band.getFameLevel()));
-            band.gainFans(50 * band.getFameLevel());
-            band.addXP(25 * band.getFameLevel());
+            System.out.println("Fans: " + fans + " -> " + (fans + (venue.getVenueCapacity()/100*15)));
+            System.out.println("XP: " + xP + " -> " + (xP + 50 * fameLevel));
+            gainFans(venue.getVenueCapacity()/100*15);
+            addXP(50 * fameLevel);
+        } else if (attendancePercent < 45 && attendancePercent >= 25) {
+            System.out.println("Terrible! Crisis!\nAttendance: " + attendancePercent);
+            System.out.println("Fans: " + fans + " -> " + (fans - (venue.getVenueCapacity() / 100 * 15)));
+            System.out.println("XP: " + xP + " -> " + (xP + 20 * fameLevel));
+            loseFans(venue.getVenueCapacity() / 100 * 15);
+            addXP(20 * fameLevel);
+        } else if (attendancePercent < 25 && attendancePercent >= 0) {
+            System.out.println("Scandal! Noone turned up!\nAttendance: " + attendancePercent);
+            System.out.println("Fans: " + fans + " -> " + (fans - (venue.getVenueCapacity() / 100 * 20)));
+            System.out.println("XP: " + xP + " -> " + (xP + 10 * fameLevel));
+            loseFans(venue.getVenueCapacity() / 100 * 20);
+            addXP(10 * fameLevel);
         }
-        System.out.println("Money: $" + band.getMoney() + " -> $" + (band.getMoney() + venue.getPayoutAmount()));
-        band.earnMoney(venue.getPayoutAmount());
+        System.out.println("Money: $" + this.money + " -> $" + (this.money + venue.getPayoutAmount()));
+        earnMoney(venue.getPayoutAmount());
     }
 
 
-    public void compete(Band opponent){
+    public void compete(Band opponent, Venue venue){
+        System.out.println("\"" + bandName + "\" competes against \"" + opponent.bandName + "\"!");
+        playGig(venue);
+        System.out.println(" ");
+        opponent.playGig(venue);
 
+        if (getFans() > opponent.getFans()){
+            System.out.println("\n"+bandName + " is dominating the scene!");
+        } else {
+            System.out.println("\n"+opponent.bandName + " is the crowd favorite!");
+        }
+    }
 
+    public void buyEquipment(double amount){
+        if (spendMoney(amount)){
+            System.out.println("\n"+bandName + " buys equipment for gigs!\nMoney: $" + money + "\n");
+        } else {
+            spendMoney(amount);
+        }
     }
 
 

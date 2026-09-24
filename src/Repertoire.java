@@ -14,6 +14,9 @@ public class Repertoire {
         songs.add(song);
         System.out.println("Song: " + song.getTitle() + " added to repertoire!");
     }
+    public Song removeSong(Song song){
+        return null;
+    }
 
     public void printAllSongs(){
         for (Song song : songs){
