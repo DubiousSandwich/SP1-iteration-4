@@ -1,5 +1,5 @@
 public class Gig {
-
+    /*
     private int attendance;
 
     //todo: gig sim, tour sim (x gigs), attendance picker
@@ -43,5 +43,7 @@ public class Gig {
         System.out.println("Money: $" + band.getMoney() + " -> $" + (band.getMoney() + venue.getPayoutAmount()));
         band.earnMoney(venue.getPayoutAmount());
     }
+
+     */
 
 }
