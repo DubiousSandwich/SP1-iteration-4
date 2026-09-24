@@ -21,4 +21,14 @@ public class Repertoire {
         }
     }
 
+    public Song getSongByName(String songName){
+        for (Song song : songs){
+            if (songName.equals(song.getTitle())){
+                return song;
+            }
+        }
+        System.out.println("Song not found :(");
+        return null;
+    }
+
 }
