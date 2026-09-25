@@ -13,7 +13,7 @@ void main(){
     myBand.addSongToRepertoire(new Song("Shock Me Like Electric Eel",246, 12000));
     myBand.addSongToRepertoire(new Song("ooga chaga",2,10));
 
-    myBand.removeSongFromRepertoire("ooga chaga");
+    myBand.removeSongFromRepertoire("ooga chaga"); //virker ikke og gider ikke rette rn
 
     rivalBand.addSongToRepertoire(new Song("We grate our cheese with style",500,30000));
     rivalBand.addSongToRepertoire(new Song("Blues but it is a distinct shade of purple",420,1000));
